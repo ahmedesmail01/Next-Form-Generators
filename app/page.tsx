@@ -113,7 +113,21 @@ export const formData: FormData = {
       updatedAt: "2024-09-01T08:40:56.676Z",
     },
     {
-      _id: "66d42898cd31e64aa13383a2",
+      _id: "66d42898pd31e64aa13383a2",
+      type: "radio", // Explicitly match the expected string literal type
+      label: "I am depending on terms?",
+      required: false,
+      options: ["hi", "bye"],
+      input_id: 12,
+      name: "dependimg on terms",
+      dependent_on: "terms",
+      dependent_value: true,
+      __v: 0,
+      createdAt: "2024-09-01T08:40:56.676Z",
+      updatedAt: "2024-09-01T08:40:56.676Z",
+    },
+    {
+      _id: "66d428998cd31e64aa13383a2",
       type: "radio", // Explicitly match the expected string literal type
       label: "Have you attended therapy before?",
       required: true,
@@ -128,7 +142,7 @@ export const formData: FormData = {
       _id: "66d42898cd31e64aa13383a2",
       type: "text", // Explicitly match the expected string literal type
       label: "conditional rendering?",
-      required: true,
+      required: false,
       options: [],
       input_id: 12,
       name: "conditional_rendering",

@@ -8,7 +8,6 @@ import { FormData } from "../interfaces";
 import { createZodSchema } from "../utils/createZodSchema";
 import { useMemo } from "react";
 import { renderInput } from "../components/FormInputs";
-//import { UseFormRegister } from "react-hook-form";
 
 interface IProps {
   formData: FormData;
@@ -22,23 +21,23 @@ const DynamicForm = ({ formData }: IProps) => {
 
   type FormValues = z.infer<typeof schema>;
 
-  console.log(
-    formData.inputs.find((i) => i.name === "therapy_experience")?.options
-  );
-
   const {
     handleSubmit,
     control,
     register,
+    watch,
     formState: { errors, isValid },
   } = useForm<FormValues>({
     mode: "onChange",
     resolver: zodResolver(schema),
     defaultValues: formData.inputs.reduce((acc, input) => {
-      acc[input.name] = input.type === "checkbox" ? false : "";
+      acc[input.name as keyof FormValues] =
+        input.type === "checkbox" ? false : "";
       return acc;
     }, {} as FormValues),
   });
+
+  const formValues = watch();
 
   const onSubmit = (data: FormValues) => {
     console.log("Form Submitted:", data);
@@ -51,22 +50,35 @@ const DynamicForm = ({ formData }: IProps) => {
           dir="rtl"
           className="w-full md:w-1/2 flex items-center justify-center "
         >
-          <Card className="w-full h-full py-8 px-4 rounded-sm  ">
+          <Card className="w-full h-full py-8 px-4 rounded-sm">
             <CardBody className="overflow-scroll scrollbar-hide">
               <h2 className="text-2xl text-center font-bold mb-6">
                 {formData.title}
               </h2>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {formData.inputs.map((input) => (
-                  <div key={input._id} className="mb-4">
-                    {renderInput(input, {
-                      formData,
-                      control,
-                      register,
-                      errors,
-                    })}
-                  </div>
-                ))}
+                {formData.inputs.map((input) => {
+                  // Check if the input has dependencies
+                  if (input.dependent_on && input.dependent_value) {
+                    // Get the value of the dependent field from the form values
+                    const dependentValue =
+                      formValues[input.dependent_on as keyof FormValues];
+
+                    // If the dependent value doesn't match, don't render this input
+                    if (dependentValue !== input.dependent_value) {
+                      return null;
+                    }
+                  }
+
+                  return (
+                    <div key={input._id} className="mb-4">
+                      {renderInput<FormValues>(input, {
+                        control,
+                        register,
+                        errors,
+                      })}
+                    </div>
+                  );
+                })}
                 <div className="flex flex-col sm:flex-row gap-4 mt-6">
                   <Button color="danger" fullWidth variant="flat">
                     Cancel
@@ -84,9 +96,9 @@ const DynamicForm = ({ formData }: IProps) => {
             </CardBody>
           </Card>
         </div>
-        <div className="hidden overflow-hidden  bg-red-500 relative md:block w-[50vw] h-full">
+        <div className="hidden overflow-hidden bg-red-500 relative md:block w-[50vw] h-full">
           <Image
-            alt="Mountains"
+            alt="Banner"
             src={formData.banner}
             quality={100}
             fill
