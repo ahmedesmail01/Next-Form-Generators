@@ -50,8 +50,18 @@ const DynamicForm = ({ formData }: IProps) => {
           dir="rtl"
           className="w-full md:w-1/2 flex items-center justify-center "
         >
-          <Card className="w-full h-full py-8 px-4 rounded-sm">
-            <CardBody className="overflow-scroll scrollbar-hide">
+          <Card className="w-full relative overflow-scroll scrollbar-hide  h-full py-8 px-4 rounded-sm flex  flex-col items-center">
+            <CardBody className="scrollbar-hide flex   ">
+              <div className="grid items-center content-center">
+                <Image
+                  src={formData.logo}
+                  width={150}
+                  height={150}
+                  alt="logo"
+                  className="m-auto"
+                />
+              </div>
+
               <h2 className="text-2xl text-center font-bold mb-6">
                 {formData.title}
               </h2>
@@ -96,7 +106,7 @@ const DynamicForm = ({ formData }: IProps) => {
             </CardBody>
           </Card>
         </div>
-        <div className="hidden overflow-hidden bg-red-500 relative md:block w-[50vw] h-full">
+        <div className="hidden overflow-hidden relative md:block w-[50vw] h-full">
           <Image
             alt="Banner"
             src={formData.banner}

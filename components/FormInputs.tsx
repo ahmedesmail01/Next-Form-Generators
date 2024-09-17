@@ -58,7 +58,10 @@ const PhoneInputComponent = <TFormValues extends FieldValues>({
   const name = input.name as Path<TFormValues>;
 
   return (
-    <div dir="ltr">
+    <div dir="ltr" className="flex flex-col gap-1 items-start">
+      <label dir="ltr" className="ms-auto">
+        {input.label}
+      </label>
       <Controller
         name={name}
         control={control}
@@ -207,7 +210,8 @@ const CountryInput = <TFormValues extends FieldValues>({
         );
 
         return (
-          <>
+          <div>
+            <label>{input.label}</label>
             <Select
               options={countries}
               name={String(name)}
@@ -232,7 +236,7 @@ const CountryInput = <TFormValues extends FieldValues>({
                 {errors[name]?.message?.toString()}
               </span>
             )}
-          </>
+          </div>
         );
       }}
     />
