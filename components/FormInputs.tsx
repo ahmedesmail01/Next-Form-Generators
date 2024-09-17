@@ -9,10 +9,18 @@ import {
   Path,
 } from "react-hook-form";
 import Select, { SingleValue } from "react-select";
+
 import countryList from "react-select-country-list";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { Input, Checkbox, Radio, RadioGroup } from "@nextui-org/react";
+import {
+  Input,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  Select as SelectUi,
+  SelectItem,
+} from "@nextui-org/react";
 import { InputField } from "../interfaces";
 
 interface RenderInputProps<TFormValues extends FieldValues> {
@@ -83,6 +91,7 @@ const SelectInput = <TFormValues extends FieldValues>({
   errors,
 }: { input: InputField } & RenderInputProps<TFormValues>) => {
   const name = input.name as Path<TFormValues>;
+  const options = input.options ?? [];
 
   return (
     <Controller
@@ -90,27 +99,23 @@ const SelectInput = <TFormValues extends FieldValues>({
       control={control}
       render={({ field }) => (
         <>
-          <Select
-            options={input.options?.map((option: string) => ({
-              value: option,
-              label: option,
-            }))}
-            placeholder={input.label}
-            className={errors[name] ? "is-invalid" : ""}
-            value={
-              field.value ? { value: field.value, label: field.value } : null
-            }
-            onChange={(
-              newValue: SingleValue<{ value: string; label: string }>
-            ) => {
-              field.onChange(newValue ? newValue.value : "");
+          <SelectUi
+            label={input.label}
+            selectedKeys={field.value ? new Set([field.value]) : new Set()}
+            onSelectionChange={(keys) => {
+              const value = Array.from(keys).pop() as string;
+              field.onChange(value);
             }}
-          />
-          {errors[name] && (
-            <span style={{ color: "red" }}>
-              {errors[name]?.message?.toString()}
-            </span>
-          )}
+            isInvalid={!!errors[name]}
+            validationState={errors[name] ? "invalid" : "valid"}
+            errorMessage={errors[name]?.message?.toString()}
+          >
+            {options.map((option: string) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectUi>
         </>
       )}
     />
