@@ -13,8 +13,8 @@ export const formData: FormData = {
   logo: "https://managethenow.com/forms/together/images/together.svg",
   title: "مع بعض متكلمين",
   color_scheme: {
-    primary: "#4CAF50",
-    secondary: "#8BC34A",
+    primary: "#010066",
+    secondary: "#D32F2F",
     tertiary: "#CDDC39",
     _id: "66d42898cd31e64aa13383a6",
   },

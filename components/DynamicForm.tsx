@@ -44,7 +44,7 @@ const DynamicForm = ({ formData }: IProps) => {
   };
 
   return (
-    <div className="bg-gray-100 py-5 px-10 flex content-center items-center">
+    <div className="bg-gray-100   lg:px-10 flex content-center items-center">
       <div className="flex h-screen bg-gray-200 rounded-xl w-full">
         <div
           dir="rtl"
@@ -62,7 +62,7 @@ const DynamicForm = ({ formData }: IProps) => {
                 />
               </div>
 
-              <h2 className="text-2xl text-center font-bold mb-6">
+              <h2 className="text-xl lg:text-2xl text-center font-bold mb-6">
                 {formData.title}
               </h2>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -89,17 +89,19 @@ const DynamicForm = ({ formData }: IProps) => {
                     </div>
                   );
                 })}
-                <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                  <Button color="danger" fullWidth variant="flat">
-                    Cancel
-                  </Button>
+                <div className="text-center">
                   <Button
                     type="submit"
-                    color="primary"
                     fullWidth
+                    variant="bordered"
                     isDisabled={!isValid}
+                    style={{
+                      borderColor: `${formData.color_scheme.primary}`,
+                      color: `${formData.color_scheme.primary}`,
+                    }}
+                    className={`w-[150px] border-2 md:w-[342px] max-w-full py-3 mx-auto rounded-full font-bold flex-1`}
                   >
-                    Submit
+                    تسجيل
                   </Button>
                 </div>
               </form>
