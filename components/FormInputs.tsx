@@ -18,6 +18,7 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
+  CheckboxGroup,
   Select as SelectUi,
   SelectItem,
 } from "@nextui-org/react";
@@ -131,28 +132,56 @@ const CheckboxInput = <TFormValues extends FieldValues>({
   errors,
 }: { input: InputField } & RenderInputProps<TFormValues>) => {
   const name = input.name as Path<TFormValues>;
+  const hasOptions = input.options && input.options.length > 0;
 
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
-        <>
-          <Checkbox
-            {...field}
-            isSelected={field.value}
-            onValueChange={field.onChange}
-          >
-            {input.label}
-          </Checkbox>
-          <br />
-          {errors[name] && (
-            <span style={{ color: "red" }}>
-              {errors[name]?.message?.toString()}
-            </span>
-          )}
-        </>
-      )}
+      render={({ field }) => {
+        if (hasOptions) {
+          // CheckboxGroup for multiple options
+          return (
+            <>
+              <CheckboxGroup
+                {...field}
+                label={input.label}
+                value={field.value || []} // Ensure value is an array
+                onChange={(values) => field.onChange(values)}
+              >
+                {input.options!.map((option, index) => (
+                  <Checkbox key={index} value={option}>
+                    {option}
+                  </Checkbox>
+                ))}
+              </CheckboxGroup>
+              {errors[name] && (
+                <span style={{ color: "red" }}>
+                  {errors[name]?.message?.toString()}
+                </span>
+              )}
+            </>
+          );
+        } else {
+          // Single Checkbox
+          return (
+            <>
+              <Checkbox
+                {...field}
+                isSelected={field.value}
+                onValueChange={(value) => field.onChange(value)}
+              >
+                {input.label}
+              </Checkbox>
+              {errors[name] && (
+                <span style={{ color: "red" }}>
+                  {errors[name]?.message?.toString()}
+                </span>
+              )}
+            </>
+          );
+        }
+      }}
     />
   );
 };

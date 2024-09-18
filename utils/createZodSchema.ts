@@ -33,7 +33,13 @@ export const createZodSchema = (inputs: InputField[]) => {
         break;
 
       case "checkbox":
-        schema = z.boolean();
+        if (input.options && input.options.length > 0) {
+          // CheckboxGroup returns an array of strings
+          schema = z.array(z.string());
+        } else {
+          // Single checkbox returns a boolean
+          schema = z.boolean();
+        }
         break;
 
       case "radio":
@@ -58,7 +64,6 @@ export const createZodSchema = (inputs: InputField[]) => {
   let mainSchema = z.object(shape);
 
   // Add conditional validation for required fields and dependencies
-  //@ts-ignore
   mainSchema = mainSchema.superRefine((data, ctx) => {
     inputs.forEach((input) => {
       const value = data[input.name];
@@ -91,7 +96,8 @@ export const createZodSchema = (inputs: InputField[]) => {
           value === undefined ||
           value === null ||
           (typeof value === "string" && value.trim() === "") ||
-          (typeof value === "boolean" && value === false)
+          (typeof value === "boolean" && value === false) ||
+          (Array.isArray(value) && value.length === 0)
         ) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,

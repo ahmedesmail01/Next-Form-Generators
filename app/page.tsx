@@ -89,10 +89,10 @@ export const formData: FormData = {
     },
     {
       _id: "66d42898pd31e64aa13383a2",
-      type: "text", // Explicitly match the expected string literal type
+      type: "checkbox", // Explicitly match the expected string literal type
       label: "سمعت فين بقي ؟",
       required: true,
-      options: ["hi", "bye"],
+      options: ["هنا", "هناك"],
       input_id: 7,
       name: "depending on terms",
       is_dependent: true,

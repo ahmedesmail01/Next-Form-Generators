@@ -32,7 +32,11 @@ const DynamicForm = ({ formData }: IProps) => {
     resolver: zodResolver(schema),
     defaultValues: formData.inputs.reduce((acc, input) => {
       if (input.type === "checkbox") {
-        acc[input.name as keyof FormValues] = false;
+        if (input.options && input.options.length > 0) {
+          acc[input.name as keyof FormValues] = []; // Default to empty array for checkbox groups
+        } else {
+          acc[input.name as keyof FormValues] = false; // Default to false for single checkbox
+        }
       } else if (input.type === "phone") {
         acc[input.name as keyof FormValues] = "";
       } else {
