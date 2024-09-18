@@ -12,9 +12,10 @@ export interface InputField {
   label: string;
   placeholder?: string;
   required: boolean;
-  dependent_on?: string | null;
-  dependent_value?: string | boolean | null;
-  options?: string[]; // options may not always be present
+  dependent_on?: number;
+  is_dependent?: boolean;
+  dependent_value?: string | boolean;
+  options?: string[];
   input_id: number;
   name: string;
   __v: number;
