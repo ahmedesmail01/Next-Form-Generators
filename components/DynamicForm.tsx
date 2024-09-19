@@ -24,8 +24,8 @@ const DynamicForm = ({ formData }: IProps) => {
   const {
     handleSubmit,
     control,
-    register,
     watch,
+    register,
     formState: { errors, isValid },
   } = useForm<FormValues>({
     mode: "onChange",
