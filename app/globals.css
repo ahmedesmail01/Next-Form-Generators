@@ -1,6 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.select_holder ul li span {
+  text-align: end;
+}
+
+.select_holderrrr ul {
+  direction: rtl !important;
+}
 /* 
 :root {
   --background: #ffffff;

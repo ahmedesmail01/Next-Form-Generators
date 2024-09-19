@@ -18,6 +18,11 @@ export const SelectInput = <TFormValues extends FieldValues>({
       render={({ field }) => (
         <>
           <Select
+            radius="full"
+            className="select_holder"
+            classNames={{
+              listbox: "select_holderrrr",
+            }}
             label={input.label}
             selectedKeys={field.value ? new Set([field.value]) : new Set()}
             onSelectionChange={(keys) => {
