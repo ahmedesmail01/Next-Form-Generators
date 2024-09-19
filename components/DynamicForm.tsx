@@ -62,13 +62,13 @@ const DynamicForm = ({ formData }: IProps) => {
   };
 
   return (
-    <div className="bg-gray-100 lg:px-10 flex content-center items-center">
-      <div className="flex h-screen bg-gray-200 rounded-xl w-full">
+    <div className="bg-gray-100  flex content-center items-center">
+      <div className="flex h-screen  bg-gray-200 rounded-xl w-full">
         <div
           dir="rtl"
-          className="w-full md:w-1/2 flex items-center justify-center "
+          className="w-full  md:w-1/2 flex items-center justify-center "
         >
-          <Card className="w-full relative overflow-scroll scrollbar-hide h-full py-8 px-4 rounded-sm flex flex-col items-center">
+          <Card className="w-full  relative overflow-scroll scrollbar-hide h-full py-8 lg:px-20  rounded-sm flex flex-col items-center">
             <CardBody className="scrollbar-hide flex">
               <div className="grid items-center content-center">
                 <Image

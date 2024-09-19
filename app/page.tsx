@@ -105,9 +105,9 @@ export const formData: FormData = {
     {
       _id: "66d428998cd31e64aa13383a2",
       type: "radio", // Explicitly match the expected string literal type
-      label: "Have you attended therapy before?",
+      label: "اختر نوع الحضور",
       required: true,
-      options: ["Yes", "No"],
+      options: ["online", "offline"],
       input_id: 8,
       name: "therapy_experience",
       __v: 0,
@@ -117,14 +117,14 @@ export const formData: FormData = {
     {
       _id: "66d42898cd31e64aa13383a2",
       type: "text", // Explicitly match the expected string literal type
-      label: "conditional rendering?",
+      label: "نزول اختياري",
       required: true,
       options: [],
       input_id: 9,
       name: "conditional_rendering",
       is_dependent: true,
       dependent_on: 8,
-      dependent_value: "Yes",
+      dependent_value: "offline",
       __v: 0,
       createdAt: "2024-09-01T08:40:56.676Z",
       updatedAt: "2024-09-01T08:40:56.676Z",
@@ -132,7 +132,7 @@ export const formData: FormData = {
     {
       _id: "66d42898cd31e64aa13383a3",
       type: "country", // Explicitly match the expected string literal type
-      label: "Country of Residence",
+      label: "اختر البلد",
       required: true,
       options: [],
       input_id: 10,

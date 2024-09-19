@@ -11,10 +11,10 @@ export const PhoneInputComponent = <TFormValues extends FieldValues>({
   const name = input.name as Path<TFormValues>;
 
   return (
-    <div dir="ltr" className="flex  flex-col gap-1 items-start">
+    <div dir="ltr" className="flex flex-col gap-1 items-start">
       <label
         dir="ltr"
-        className="  relative z-10 top-10 text-sm text-gray-500 pe-4 ms-auto"
+        className="relative z-30 top-10 text-sm text-gray-500 pe-4 ms-auto"
       >
         {input.label}
       </label>
@@ -38,12 +38,25 @@ export const PhoneInputComponent = <TFormValues extends FieldValues>({
                 border: "none",
                 borderRadius: "80px",
               }}
-              containerStyle={{ marginBottom: "10px" }}
+              dropdownStyle={{
+                borderRadius: "10px",
+                width: "280px",
+                //zIndex: 8,
+              }}
+              containerStyle={{
+                marginBottom: "10px",
+                scrollSnapType: "none",
+                zIndex: 20,
+              }}
               onChange={(phone) => field.onChange(phone)}
               value={typeof field.value === "string" ? field.value : ""}
+              dropdownClass="custom-dropdown"
             />
             {errors[name] && (
-              <span style={{ color: "red" }}>
+              <span
+                dir="rtl"
+                className="block w-full text-red-500 mt-1 text-right"
+              >
                 {errors[name]?.message?.toString()}
               </span>
             )}

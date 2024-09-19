@@ -11,15 +11,17 @@ export const TextInput = <TFormValues extends FieldValues>({
   const name = input.name as Path<TFormValues>;
 
   return (
-    <Input
-      dir="rtl"
-      radius="full"
-      type={input.type}
-      label={input.label}
-      isRequired={input.required}
-      isInvalid={!!errors[name]}
-      errorMessage={errors[name]?.message?.toString()}
-      {...register(name)}
-    />
+    <>
+      <Input
+        dir="rtl"
+        radius="full"
+        type={input.type}
+        label={input.label}
+        isRequired={input.required}
+        isInvalid={!!errors[name]}
+        errorMessage={errors[name]?.message?.toString()}
+        {...register(name)}
+      />
+    </>
   );
 };

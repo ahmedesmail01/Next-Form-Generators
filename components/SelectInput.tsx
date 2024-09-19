@@ -39,6 +39,14 @@ export const SelectInput = <TFormValues extends FieldValues>({
               </SelectItem>
             ))}
           </Select>
+          {errors[name] && (
+            <span
+              dir="rtl"
+              className="block w-full text-red-500 mt-1 text-right"
+            >
+              {errors[name]?.message?.toString()}
+            </span>
+          )}
         </>
       )}
     />
