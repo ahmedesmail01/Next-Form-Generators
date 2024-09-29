@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+
+:root {
+  --primary-color: transparent; /* Default primary color */
+}
+
+
 * {
   scrollbar-width: 0;
 }
@@ -55,4 +61,11 @@ body {
 
  * {
   font-family: Cairo !important;
+  /* direction: rtl !important; */
  }
+
+
+ .ant-select-selector .ant-select-selection-placeholder{
+  color: #696969 !important;
+ }
+ 

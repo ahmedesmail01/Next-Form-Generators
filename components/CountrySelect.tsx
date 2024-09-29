@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Controller } from "react-hook-form";
 import ErrorMsg from "./ErrorMsg";
 
-const PhoneNumber = ({
+const CountrySelect = ({
   control,
   name,
   error,
@@ -29,7 +29,7 @@ const PhoneNumber = ({
             allowClear
             value={field.value}
             onChange={(value) => field.onChange(value)}
-            placeholder="اختر كود الدولة"
+            placeholder="اختر الدولة"
             optionFilterProp="labelText" // Use labelText for filtering and searching
             filterSort={(optionA, optionB) =>
               (optionA?.labelText ?? "")
@@ -47,7 +47,7 @@ const PhoneNumber = ({
                     className="mx-2"
                     width={20}
                   />{" "}
-                  {country.name} ({country.countryCallingCode}){" "}
+                  {country.name}
                 </div>
               ),
             }))}
@@ -59,4 +59,4 @@ const PhoneNumber = ({
   );
 };
 
-export default PhoneNumber;
+export default CountrySelect;

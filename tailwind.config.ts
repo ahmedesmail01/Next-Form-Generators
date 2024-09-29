@@ -12,6 +12,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        primary: "var(--primary-color)", // Use the CSS variable as the primary color
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
