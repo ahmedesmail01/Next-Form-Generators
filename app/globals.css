@@ -69,3 +69,11 @@ body {
   color: #696969 !important;
  }
  
+
+ .ant-select-selection-placeholder{
+  text-align: right;
+ }
+ /* .ant-select-selector{
+  border-radius: 20px !important;
+  background: #fbfbfb !important;
+ } */

@@ -23,7 +23,7 @@ const CountrySelect = ({
         control={control}
         render={({ field }) => (
           <Select
-            // direction="rtl"
+            direction="rtl"
             className={"w-full !h-[49px] !border-none !shadow-none"}
             showSearch
             allowClear

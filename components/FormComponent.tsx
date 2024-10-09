@@ -1,7 +1,7 @@
 "use client";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Form, Input, Radio, Select, Spin } from "antd";
-import React, { useEffect } from "react";
+import { Button, Form, Input, Radio, Select, Spin, Steps, theme } from "antd";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import ErrorMsg from "./ErrorMsg";
@@ -9,8 +9,10 @@ import PhoneNumber from "./PhoneNumber";
 import CountrySelect from "./CountrySelect";
 import { Loading3QuartersOutlined } from "@ant-design/icons";
 import { Spinner } from "@nextui-org/react";
+import FormStep1 from "./FormStep1";
+import FormStep2 from "./FormStep2";
 // const InputClassNames = `!border-[#E7E9EB] !p-0 h-[49px] !px-4 placeholder:!text-[#696969]  placeholder:!text-sm placeholder:!font-normal placeholder:!leading-[normal]`;
-const InputClassNames = `!border-[#d9d9d9] !p-0 h-[49px] !px-4 placeholder:!text-[#696969]  placeholder:!text-sm placeholder:!font-normal placeholder:!leading-[normal]`;
+export const InputClassNames = `!border-[#d9d9d9] !p-0 h-[49px] !px-4 placeholder:!text-[#696969]  placeholder:!text-sm placeholder:!font-normal placeholder:!leading-[normal]`;
 
 // Define the types for the input fields
 interface InputOption {
@@ -19,7 +21,7 @@ interface InputOption {
   _id?: string;
 }
 
-interface FormInput {
+export interface FormInput {
   _id: string;
   type: "text" | "email" | "number" | "select" | "radio" | "checkbox";
   label: string;
@@ -58,251 +60,107 @@ export interface FormModel {
     last_name: string;
   };
   __v: number;
+  attendance_type: "offline" | "offline-online" | "webinar" | "online";
 }
 const FormComponent = ({ form }: { form: FormModel }) => {
+  console.log(form, "form");
+
+  const [current, setCurrent] = useState(0);
+  const [client, setClient] = useState<typeof form.inputs>([]);
+
+  const { token } = theme.useToken();
+
+  const next = () => {
+    setCurrent(current + 1);
+  };
+
+  const prev = () => {
+    setCurrent(current - 1);
+  };
+
+  const contentStyle: React.CSSProperties = {
+    textAlign: "center",
+    color: token.colorTextTertiary,
+    borderRadius: token.borderRadiusLG,
+    border: `1px dashed ${token.colorBorder}`,
+    marginTop: 16,
+    minHeight: `80vh`,
+    height: "fit-content",
+    // padding: "50px",
+  };
+
+  const steps = [
+    {
+      title: "Register your data",
+      content: (
+        <FormStep1
+          form={form}
+          next={next}
+          prev={prev}
+          stepsLength={2}
+          current={current}
+          isStepperRendered={true}
+          client={client}
+          setClient={setClient}
+        />
+      ),
+    },
+    {
+      title: "Reserve a seat",
+      content: (
+        <FormStep2
+          form={form}
+          next={next}
+          prev={prev}
+          stepsLength={2}
+          current={current}
+          isStepperRendered={true}
+          client={client}
+          setClient={setClient}
+        />
+      ),
+    },
+  ];
+  const items = steps.map((item) => ({ key: item.title, title: item.title }));
+
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--primary-color",
       form?.color_scheme?.primary
     );
+
+    document.title = form.title || "";
+    const link: any =
+      document.querySelector("link[rel*='icon']") ||
+      document.createElement("link");
+    link.type = "image/x-icon";
+    link.rel = "shortcut icon";
+    link.href = form.logo;
+
+    document.getElementsByTagName("head")[0].appendChild(link);
+    // document.documentElement.title = "Form";
   }, [form]);
 
-  const [formSchema, setSchema] = React.useState<any>(null);
-  // Function to generate Yup validation schema
-
-  const generateValidationSchema = (
-    inputs: FormInput[]
-  ): Yup.ObjectSchema<Record<string, any>> => {
-    const shape: Record<string, Yup.AnySchema> = {};
-
-    // Create a lookup object to map `input_id` to `name`
-    const inputIdToNameMap = inputs.reduce((acc, input) => {
-      acc[input.input_id] = input.name;
-      return acc;
-    }, {} as Record<number, string>);
-
-    inputs?.forEach((input) => {
-      let validationRule: Yup.AnySchema = Yup.string();
-
-      // Check the input type and create the corresponding validation rule
-      switch (input.type) {
-        case "text":
-          validationRule = Yup.string();
-          break;
-        case "email":
-          validationRule = Yup.string().email("Invalid email format");
-          break;
-        case "number":
-          validationRule = Yup.number().typeError(
-            `${input.label} must be a number`
-          );
-          break;
-        case "select":
-          validationRule = Yup.string();
-          break;
-        default:
-          validationRule = Yup.string();
-      }
-
-      if (input.dependant_on && input.dependant_value) {
-        const dependantFieldName = inputIdToNameMap[input.dependant_on as any];
-
-        if (dependantFieldName) {
-          // console.log(input.dependant_value);
-          shape[input.name] = validationRule.when(dependantFieldName, {
-            is: (value: any) => {
-              return value === input.dependant_value;
-            },
-            then: (schema) =>
-              input.required
-                ? schema.required(`${input.label}`)
-                : schema.notRequired(),
-            otherwise: (schema) => schema.notRequired(),
-          });
-        } else {
-          shape[input.name] = validationRule;
-        }
-      } else {
-        shape[input.name] = input.required
-          ? validationRule.required(`${input.label} is required`)
-          : validationRule.notRequired();
-      }
-    });
-
-    return Yup.object().shape(shape);
-  };
-
-  useEffect(() => {
-    if (form) {
-      setSchema(generateValidationSchema(form.inputs));
-    }
-  }, [form]);
-
-  type FormData = Yup.InferType<typeof formSchema>;
-
-  const {
-    control,
-    formState: { errors },
-    register,
-    watch,
-    handleSubmit,
-  } = useForm<FormData>({
-    resolver: yupResolver(formSchema),
-  });
-
-  const test: FormData = {};
-
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-  };
-
-  const inputIdToNameMap = React.useMemo(() => {
-    return form.inputs.reduce((acc, input) => {
-      acc[input.input_id] = input.name;
-      return acc;
-    }, {} as Record<number, string>);
-  }, [form.inputs]);
-
-  const watchFields = watch();
-  console.log(form?.inputs);
+  // form./
+  if (
+    form.attendance_type == "offline" ||
+    form.attendance_type == "offline-online"
+  ) {
+    return (
+      <div className="flex flex-col w-full p-[30px]">
+        <Steps current={current} items={items} />
+        <div style={contentStyle}>{steps[current].content}</div>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col w-full">
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-        {form?.inputs.map((input: FormInput, index: number) => {
-          // Check if the field is dependant and get its value from watchFields
-          if (input.dependant_on && input.dependant_value) {
-            const dependantFieldName =
-              inputIdToNameMap[input.dependant_on as any];
-
-            if (dependantFieldName) {
-              const dependantValue = watchFields[dependantFieldName];
-
-              // If the dependant value doesn't match, skip rendering this input
-              if (dependantValue !== input.dependant_value) {
-                return null;
-              }
-            }
-          }
-
-          // Render input based on type
-          switch (input.type) {
-            case "text":
-            case "email":
-            case "number":
-              return (
-                <div key={input._id} className="flex flex-col">
-                  <Controller
-                    name={input.name}
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <Input
-                        placeholder={input.label}
-                        className={InputClassNames}
-                        value={value}
-                        onChange={onChange}
-                      />
-                    )}
-                  />
-                  <ErrorMsg message={errors[input.name]?.message as string} />
-                </div>
-              );
-            case "select":
-              if (input.name == "country_code") {
-                return (
-                  <PhoneNumber
-                    key={input._id}
-                    control={control}
-                    error={errors[input.name]?.message as string}
-                    name={input.name}
-                  />
-                );
-              }
-              if (input.name == "country") {
-                return (
-                  <CountrySelect
-                    key={input._id}
-                    control={control}
-                    error={errors[input.name]?.message as string}
-                    name={input.name}
-                  />
-                );
-              }
-              return (
-                <div key={input._id} className="flex flex-col">
-                  <Controller
-                    name={input.name}
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <Select
-                        onChange={(e) => onChange(e)}
-                        value={value}
-                        allowClear
-                        placeholder={input.label}
-                        className={"w-full !h-[49px] !border-none !shadow-none"}
-                        options={input?.options?.map((el) => {
-                          return {
-                            label: el?.label,
-                            value: el?.value,
-                          };
-                        })}
-                      />
-                    )}
-                  />
-                  <ErrorMsg message={errors[input.name]?.message as string} />
-                </div>
-              );
-            case "radio":
-              return (
-                <div key={input._id} className="flex flex-col">
-                  <Controller
-                    name={input.name}
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <>
-                        <h4 className="text-[#696969] text-sm font-normal leading-[normal]">
-                          {input.label}
-                        </h4>
-                        <Radio.Group
-                          onChange={(e) => onChange(e.target.value)}
-                          value={value}
-                        >
-                          {input.options?.map((el) => (
-                            <Radio value={el.value}>{el.label}</Radio>
-                          ))}
-                        </Radio.Group>
-                      </>
-                    )}
-                  />
-                  <ErrorMsg message={errors[input.name]?.message as string} />
-                </div>
-              );
-            default:
-              return (
-                <div key={input._id} className="flex flex-col">
-                  <Controller
-                    name={input.name}
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <>
-                        <h4 className="text-[#696969] text-sm font-normal leading-[normal]">
-                          {input.label}
-                        </h4>
-                        <Radio.Group>
-                          <Radio value="apple"> Apple </Radio>
-                          <Radio value="pear"> Pear </Radio>
-                        </Radio.Group>
-                      </>
-                    )}
-                  />
-                  <ErrorMsg message={errors[input.name]?.message as string} />
-                </div>
-              );
-          }
-        })}
-        <Button type="primary" className="!bg-primary" htmlType="submit">
-          Submit
-        </Button>
-      </form>
+      <FormStep1
+        client={client}
+        setClient={setClient}
+        form={form}
+        isStepperRendered={false}
+      />
     </div>
   );
 };
