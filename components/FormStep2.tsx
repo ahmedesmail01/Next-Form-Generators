@@ -1,8 +1,13 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { api } from "@/services/api";
 import { Button, message } from "antd";
 import React, { useState } from "react";
 
 const FormStep2 = ({
   form,
+  inputs,
   next,
   prev,
   stepsLength,
@@ -11,7 +16,8 @@ const FormStep2 = ({
   client,
   setClient,
 }: {
-  form: any;
+  form: FormDetails;
+  inputs: InputField[];
   next: () => void;
   prev: () => void;
   stepsLength: number;
@@ -78,7 +84,30 @@ const FormStep2 = ({
 
   const handleSubmit = async () => {
     if (!selectedSeat) return message.info("يجب عليك تحديد مقعد");
-    console.log(client);
+    setIsLoading(true);
+    const answers = [];
+    for (const key in client) {
+      const obj = { question: key.toString(), answer: client[key].toString() };
+      answers.push(obj);
+    }
+
+    const sendData = {
+      form_slug: form.form_slug,
+      answers,
+      seat: selectedSeat.seatIndex,
+    };
+
+    try {
+      const { data, status } = await api.post("/form_responses", sendData);
+      console.log(data);
+      console.log(status);
+      status == 201 && message.success("تم التسجيل بنجاح");
+    } catch (err: any) {
+      // console.log(err);
+      message.error(err?.response?.data?.message || "حدث خطأ ما");
+    } finally {
+      setIsLoading(false);
+    }
   };
   function handleClick(section: Section, index: number) {
     setSelectedSeat({ section, seatIndex: index });
@@ -92,6 +121,7 @@ const FormStep2 = ({
     seatIndex: number,
     is_booked: boolean
   ) => {
+    console.log(value);
     // seatIndex = seatIndex + 1;
     const isReserved = is_booked;
 
@@ -114,7 +144,7 @@ const FormStep2 = ({
         }
         disabled={isReserved}
       >
-        {seatIndex}
+        {/* {seatIndex} */}
       </button>
     );
   };
@@ -158,12 +188,12 @@ const FormStep2 = ({
       </div>
       <div className="flex lg:flex-row  flex-col justify-center lg:mt-20 gap-9">
         {/* {console.log(Object.keys(sections))} */}
-        {sections.map((section: any) => {
+        {sections?.map((section) => {
           console.log(section);
           return (
             <div className="flex flex-col">
               <div className="flex flex-wrap justify-center gap-2">
-                {section?.seats?.map((value: any, index: number) =>
+                {section?.seats?.map((value, index: number) =>
                   renderSeat(
                     section as Section,
                     value,
@@ -181,9 +211,10 @@ const FormStep2 = ({
           type="primary"
           className="!bg-primary flex-1 !p-5 !font-bold"
           // htmlType="submit"
+          loading={isLoading}
           onClick={handleSubmit}
         >
-          تأكيد الحجز
+          {isLoading ? "جاري التحميل" : "تأكيد الحجز"}
         </Button>
 
         {current > 0 && (

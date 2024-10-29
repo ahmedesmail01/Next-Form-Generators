@@ -86,7 +86,10 @@ const DynamicForm = ({ formData }: IProps) => {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {formData.inputs.map((input) => {
                   // Conditional rendering based on dependencies
-                  if (input.is_dependent && input.dependent_on !== undefined) {
+                  if (
+                    input.dependent_value &&
+                    input.dependent_on !== undefined
+                  ) {
                     const dependentFieldName =
                       inputIdToNameMap[input.dependent_on];
                     if (dependentFieldName) {

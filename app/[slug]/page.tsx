@@ -1,6 +1,5 @@
-import FormComponent, { FormModel } from "@/components/FormComponent";
-import { CustomError, getOne } from "@/services/server";
-import Image from "next/image";
+import FormComponent from "@/components/FormComponent";
+import { getOne } from "@/services/server";
 import React from "react";
 
 const page = async ({
@@ -11,9 +10,11 @@ const page = async ({
   };
 }) => {
   const { slug } = params;
-  const formDetails: FormModel = await getOne<FormModel>(`forms`, slug);
-  // console.log(formDetails);
-  return <FormComponent form={formDetails as FormModel} />;
+  const formDetails: GetFormResponse = await getOne<GetFormResponse>(
+    `forms`,
+    slug
+  );
+  return <FormComponent data={formDetails} />;
 };
 
 export default page;

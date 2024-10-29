@@ -37,7 +37,7 @@ const CountrySelect = ({
                 .localeCompare((optionB?.labelText ?? "").toLowerCase())
             }
             options={countries.map((country: any) => ({
-              value: country.countryCallingCode, // Using calling code as the value
+              value: country?.name, // Using calling code as the value
               labelText: `${country.name} (${country.countryCallingCode})`, // String for filtering and sorting
               label: (
                 <div className="flex items-center">

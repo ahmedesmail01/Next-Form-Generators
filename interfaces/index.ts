@@ -13,7 +13,7 @@ export interface InputField {
   placeholder?: string;
   required: boolean;
   dependent_on?: number;
-  is_dependent?: boolean;
+  // is_dependent?: boolean;
   dependent_value?: string | boolean;
   options?: string[];
   input_id: number;
