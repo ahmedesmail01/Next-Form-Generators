@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Form, Input, Radio, Select, Spin, Steps, theme } from "antd";
@@ -14,19 +11,12 @@ import { Loading3QuartersOutlined } from "@ant-design/icons";
 import { Spinner } from "@nextui-org/react";
 import FormStep1 from "./FormStep1";
 import FormStep2 from "./FormStep2";
-// const InputClassNames = `!border-[#E7E9EB] !p-0 h-[49px] !px-4 placeholder:!text-[#696969]  placeholder:!text-sm placeholder:!font-normal placeholder:!leading-[normal]`;
-export const InputClassNames = `!border-[#d9d9d9] !p-0 h-[49px] !px-4 placeholder:!text-[#696969]  placeholder:!text-sm placeholder:!font-normal placeholder:!leading-[normal]`;
-
-// Define the types for the input fields
+export const InputClassNames = `!hover:border-primary !rounded-full !border-[#d9d9d9] !p-0 h-[49px] !px-4 placeholder:!text-[#696969]  placeholder:!text-sm placeholder:!font-normal placeholder:!leading-[normal]`;
 
 const FormComponent = ({ data }: { data: GetFormResponse }) => {
-  // console.log(form, "form");
-
   const [current, setCurrent] = useState(0);
   const [client, setClient] = useState<(typeof data.inputs)[0]>();
-
   const { token } = theme.useToken();
-
   const next = () => {
     setCurrent(current + 1);
   };
@@ -43,7 +33,6 @@ const FormComponent = ({ data }: { data: GetFormResponse }) => {
     marginTop: 16,
     minHeight: `80vh`,
     height: "fit-content",
-    // padding: "50px",
   };
 
   const steps = [

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Input, message, Radio, Select } from "antd";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -6,10 +5,11 @@ import ErrorMsg from "./ErrorMsg";
 import PhoneNumber from "./PhoneNumber";
 import CountrySelect from "./CountrySelect";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
+import * as yup from "yup";
 import Image from "next/image";
 import { api } from "@/services/api";
 import { InputClassNames } from "./FormComponent";
+import { createYupValidationSchema } from "@/utils/createYupSchema";
 
 const FormStep1 = ({
   form,
@@ -31,84 +31,18 @@ const FormStep1 = ({
   client: any;
   setClient: any;
 }) => {
-  console.log(inputs);
-  const generateValidationSchema = (
-    inputs: InputField[]
-  ): Yup.ObjectSchema<Record<string, any>> => {
-    const shape: Record<string, Yup.AnySchema> = {};
-
-    // Create a lookup object to map `input_id` to `name`
-    const inputIdToNameMap = inputs?.reduce((acc, input) => {
-      acc[input.id] = input.name;
-      return acc;
-    }, {} as Record<number, string>);
-
-    console.log(inputIdToNameMap);
-    console.log(inputs);
-
-    inputs?.forEach((input) => {
-      let validationRule: Yup.AnySchema = Yup.string();
-
-      // Check the input type and create the corresponding validation rule
-      switch (input.type) {
-        case "text":
-          validationRule = Yup.string();
-          break;
-        case "email":
-          validationRule = Yup.string().email("بريد الكتروني غير صالح");
-          break;
-        case "number":
-          validationRule = Yup.number().typeError(
-            `${input.label} يجب ان يكون رقم`
-          );
-          break;
-        case "select":
-          validationRule = Yup.string();
-          break;
-        default:
-          validationRule = Yup.string();
-      }
-
-      if (input.dependant_on && input.dependant_value) {
-        const dependantFieldName = inputIdToNameMap[input.id as any];
-        console.log(dependantFieldName);
-        console.log(inputIdToNameMap);
-        if (dependantFieldName) {
-          // console.log(input.dependant_value);
-          shape[input.name] = validationRule.when(dependantFieldName, {
-            is: (value: any) => {
-              return value === input.dependant_value;
-            },
-            then: (schema) =>
-              input.required
-                ? schema.required(`${input.label}`)
-                : schema.notRequired(),
-            otherwise: (schema) => schema.notRequired(),
-          });
-        } else {
-          shape[input.name] = validationRule;
-        }
-      } else {
-        shape[input.name] = input.required
-          ? validationRule.required(`${input.label} مطلوب`)
-          : validationRule.notRequired();
-      }
-    });
-
-    return Yup.object().shape(shape);
-  };
   const [formSchema, setSchema] = React.useState<any>(null);
 
   const inputIdToNameMap = React.useMemo(() => {
     return inputs?.reduce((acc, input) => {
-      acc[input.input_id] = input.name;
+      acc[input.id as any] = input.name;
       return acc;
     }, {} as Record<number, string>);
   }, [inputs]);
 
   useEffect(() => {
     if (inputs) {
-      setSchema(generateValidationSchema(inputs));
+      setSchema(createYupValidationSchema(inputs));
     }
   }, [inputs]);
 
@@ -116,8 +50,7 @@ const FormStep1 = ({
     return (
       <div className="w-full min-h-screen h-fit flex">
         <div className="w-full lg:w-1/2 bg-white flex flex-col pb-8 items-center justify-center p-8">
-          <img
-            // crossOrigin="anonymous"
+          <Image
             src={form?.logo}
             width={200}
             height={230}
@@ -154,18 +87,15 @@ const FormStep1 = ({
   }
 
   if (form.layout == "form_only") {
-    console.log(inputs);
     return (
       <div className="w-[600px]   p-4 my-4 rounded-xl flex flex-col items-center justify-center m-auto max-w-full min-h-fit py-6">
         <Image
-          // crossOrigin="anonymous"
           src={form?.logo}
           width={200}
           height={200}
           className="max-w-full  mb-4"
           alt=""
         />
-        {/* <img src={form?.logo} /> */}
         <h2 className="my-4 font-semibold text-xl">{form?.title}</h2>
         <Form
           inputs={inputs}
@@ -209,7 +139,7 @@ const Form = ({
   setClient: any;
   client: any;
 }) => {
-  type FormData = Yup.InferType<typeof formSchema>;
+  type FormData = yup.InferType<typeof formSchema>;
 
   const {
     control,
@@ -283,12 +213,6 @@ const Form = ({
                   render={({ field }) => (
                     <Input
                       dir="rtl"
-                      style={
-                        {
-                          // borderRadius: "20px",
-                          // background: "#fbfbfb",
-                        }
-                      }
                       placeholder={input.label}
                       className={InputClassNames}
                       {...field}
@@ -396,7 +320,7 @@ const Form = ({
       <div className="w-full">
         <Button
           type="primary"
-          className="!bg-primary w-full !p-5 !font-bold"
+          className="!bg-primary w-full !p-5 !font-bold !rounded-full"
           htmlType="submit"
           loading={isSubmitting}
         >

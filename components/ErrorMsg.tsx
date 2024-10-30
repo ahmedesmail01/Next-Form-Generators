@@ -1,5 +1,4 @@
 import React from "react";
-import { GoAlert } from "react-icons/go";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 
 const ErrorMsg = ({ message }: { message: string }) => {

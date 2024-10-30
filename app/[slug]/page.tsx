@@ -14,6 +14,7 @@ const page = async ({
     `forms`,
     slug
   );
+
   return <FormComponent data={formDetails} />;
 };
 

@@ -2,16 +2,16 @@ import React from "react";
 import { Select } from "antd";
 //@ts-ignore
 import { useCountries } from "use-react-countries";
-import Image from "next/image";
-import { Controller } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import ErrorMsg from "./ErrorMsg";
+import Image from "next/image";
 
 const CountrySelect = ({
   control,
   name,
   error,
 }: {
-  control: any;
+  control: Control;
   name: string;
   error: string;
 }) => {
@@ -24,8 +24,9 @@ const CountrySelect = ({
         render={({ field }) => (
           <Select
             direction="rtl"
-            className={"w-full !h-[49px] !border-none !shadow-none"}
+            className={"w-full !rounded-full !h-[49px]"}
             showSearch
+            variant="outlined"
             allowClear
             value={field.value}
             onChange={(value) => field.onChange(value)}
@@ -41,11 +42,12 @@ const CountrySelect = ({
               labelText: `${country.name} (${country.countryCallingCode})`, // String for filtering and sorting
               label: (
                 <div className="flex items-center">
-                  <img
+                  <Image
                     src={country.flags.png}
                     alt={country.name}
                     className="mx-2"
                     width={20}
+                    height={20}
                   />{" "}
                   {country.name}
                 </div>
