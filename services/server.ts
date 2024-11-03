@@ -19,16 +19,13 @@ export async function getOne<T>(endpoint: string, id: string): Promise<T> {
   }
 }
 
-export async function getAll<T>(endpoint: string): Promise<T[] | CustomError> {
+export async function getAll<T>(endpoint: string): Promise<T[]> {
   try {
-    const response = await api.get<T[]>(endpoint);
-    return response.data;
+    const { data } = await api.get(endpoint);
+    return data;
   } catch (error: any) {
-    console.error(`Error fetching all ${endpoint}:`, error);
-    return {
-      error: error?.response?.data?.message,
-      status: error?.response?.status,
-    };
+    // console.log(error);
+    throw new Error(error);
   }
 }
 

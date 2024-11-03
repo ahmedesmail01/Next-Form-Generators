@@ -29,7 +29,7 @@ type InputField = {
   type: "text" | "email" | "select" | "number" | "radio" | "checkbox";
   placeholder: string | null;
   required: boolean;
-  options: InputOption[] | null; // Replace `any` with the appropriate type if known
+  options?: InputOption[]; // Replace `any` with the appropriate type if known
   name: string;
   dependant_on: string | null;
   dependant_value: string | null;
@@ -45,6 +45,7 @@ type GetFormResponse = {
 type InputOption = {
   label: string;
   value: string;
+  avatar?: string;
 };
 
 type Seat = {

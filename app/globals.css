@@ -59,3 +59,15 @@ body {
  .ant-select-selector{
   border-radius: 100px !important;
  }
+
+ .choose_country_autocomplete [data-slot="input-wrapper"]:first-child{
+  border: none !important
+}
+
+.choose_country_autocomplete [data-slot="label"]:first-child{
+  @apply pr-2
+}
+
+.choose_country_autocomplete input{
+  @apply pr-4
+}

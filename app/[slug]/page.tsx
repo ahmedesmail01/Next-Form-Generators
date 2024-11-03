@@ -1,8 +1,13 @@
+"use client";
 import FormComponent from "@/components/FormComponent";
-import { getOne } from "@/services/server";
+import Loading from "@/components/Loading";
+import { getAll, getOne } from "@/services/server";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
 import React from "react";
+import useSWR from "swr";
 
-const page = async ({
+const Page = ({
   params,
 }: {
   params: {
@@ -10,12 +15,18 @@ const page = async ({
   };
 }) => {
   const { slug } = params;
-  const formDetails: GetFormResponse = await getOne<GetFormResponse>(
-    `forms`,
-    slug
-  );
+  const { data, isLoading } = useSWR(`forms/${slug}`, getAll);
+  const form: GetFormResponse | any = data || [];
 
-  return <FormComponent data={formDetails} />;
+  if (isLoading)
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Spin size="small" indicator={<LoadingOutlined spin />} />
+      </div>
+    );
+  if (!data) return <div>Not Found</div>;
+
+  return <FormComponent data={form} />;
 };
 
-export default page;
+export default Page;

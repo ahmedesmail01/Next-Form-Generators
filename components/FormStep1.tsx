@@ -1,4 +1,4 @@
-import { Button, Input, message, Radio, Select } from "antd";
+import { Input, message, Radio, Select } from "antd";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ErrorMsg from "./ErrorMsg";
@@ -10,6 +10,8 @@ import Image from "next/image";
 import { api } from "@/services/api";
 import { InputClassNames } from "./FormComponent";
 import { createYupValidationSchema } from "@/utils/createYupSchema";
+import { Button, Input as NextUIInput } from "@nextui-org/react";
+import SelectList from "./SelectList";
 
 const FormStep1 = ({
   form,
@@ -35,7 +37,7 @@ const FormStep1 = ({
 
   const inputIdToNameMap = React.useMemo(() => {
     return inputs?.reduce((acc, input) => {
-      acc[input.id as any] = input.name;
+      acc[input.dependant_on as any] = input.name;
       return acc;
     }, {} as Record<number, string>);
   }, [inputs]);
@@ -79,7 +81,7 @@ const FormStep1 = ({
             height={100}
             src={form?.banner as string}
             alt="Banner"
-            className="object-cover w-full h-screen sticky top-0 object-top"
+            className="w-full h-screen sticky top-0 object-top"
           />
         </div>
       </div>
@@ -185,19 +187,16 @@ const Form = ({
       onSubmit={handleSubmit(onSubmit)}
     >
       {inputs?.map((input: InputField) => {
-        // Check if the field is dependant and get its value from watchFields
+        // // Check if the field is dependant and get its value from watchFields
         if (input.dependant_on && input.dependant_value) {
-          const dependantFieldName =
-            inputIdToNameMap[input.dependant_on as any];
-
-          if (dependantFieldName) {
-            const dependantValue = watchFields[dependantFieldName];
-
-            // If the dependant value doesn't match, skip rendering this input
-            if (dependantValue !== input.dependant_value) {
-              return null;
-            }
-          }
+          // const dependantValue =
+          // watchFields[inputIdToNameMap[input.dependant_on]];
+          // console.log(watchFields);
+          // console.log(input.dependant_on);
+          // console.log(inputIdToNameMap);
+          // console.log(watchFields[input.dependant_on]);
+          if (watchFields[input.dependant_on] !== input.dependant_value)
+            return null;
         }
 
         // Render input based on type
@@ -206,16 +205,30 @@ const Form = ({
           case "email":
           case "number":
             return (
-              <div key={input.id} className="flex flex-col">
+              <div key={input.id} className="flex flex-col" dir="rtl">
                 <Controller
                   name={input.name}
                   control={control}
                   render={({ field }) => (
-                    <Input
+                    <NextUIInput
+                      isRequired
+                      key={input.id}
+                      size="sm"
+                      value={field.value}
+                      onChange={field.onChange}
                       dir="rtl"
-                      placeholder={input.label}
-                      className={InputClassNames}
-                      {...field}
+                      type={input.type}
+                      name={input.name}
+                      label={input.label}
+                      classNames={{
+                        label: "pr-2",
+                        input: "pr-2",
+                        inputWrapper:
+                          "!bg-[#F5F8FC] !hover:bg-[#F5F8FC] border-none rounded-[24px] ",
+                      }}
+                      variant={"flat"}
+                      radius={"full"}
+                      className="w-full"
                     />
                   )}
                 />
@@ -223,50 +236,10 @@ const Form = ({
               </div>
             );
           case "select":
-            if (input.name == "country_code") {
-              return (
-                <PhoneNumber
-                  key={input.id}
-                  control={control}
-                  error={errors[input.name]?.message as string}
-                  name={input.name}
-                />
-              );
-            }
-            if (input.name == "country") {
-              return (
-                <CountrySelect
-                  key={input.id}
-                  control={control}
-                  error={errors[input.name]?.message as string}
-                  name={input.name}
-                />
-              );
-            }
             return (
-              <div key={input.id} className="flex flex-col">
-                <Controller
-                  name={input.name}
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <Select
-                      onChange={(e) => onChange(e)}
-                      value={value}
-                      allowClear
-                      placeholder={input.label}
-                      className={"w-full !h-[49px] !border-none !shadow-none"}
-                      options={input?.options?.map((el) => {
-                        return {
-                          label: el?.label,
-                          value: el?.value,
-                        };
-                      })}
-                    />
-                  )}
-                />
-                <ErrorMsg message={errors[input.name]?.message as string} />
-              </div>
+              <SelectList input={input} errors={errors} control={control} />
             );
+
           case "radio":
             return (
               <div key={input.id} className="flex flex-col">
@@ -319,10 +292,10 @@ const Form = ({
       })}
       <div className="w-full">
         <Button
-          type="primary"
-          className="!bg-primary w-full !p-5 !font-bold !rounded-full"
-          htmlType="submit"
-          loading={isSubmitting}
+          variant="bordered"
+          className="!border-primary border !text-primary w-full !p-5 !font-bold !rounded-full"
+          type="submit"
+          isLoading={isSubmitting}
         >
           {isStepperRendered
             ? "التالي"

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as yup from "yup";
 
 export const createYupValidationSchema = (inputs: InputField[]) => {
@@ -11,27 +10,27 @@ export const createYupValidationSchema = (inputs: InputField[]) => {
         case "email":
           validator = yup
             .string()
-            .email("Invalid email")
-            .required("This field is required");
+            .email("بريد إلكتروني غير صالح")
+            .required("هذا الحقل مطلوب");
           break;
         case "number":
           validator = yup
             .number()
-            .typeError("Invalid number")
-            .required("This field is required");
+            .typeError("رقم غير صالح")
+            .required("هذا الحقل مطلوب");
           break;
         case "select":
-          validator = yup.string().required("This field is required");
+          validator = yup.string().required("هذا الحقل مطلوب");
           if (input.options && input.options.length > 0) {
             const validValues = input.options.map(
               (option: { label: string; value: string }) => option.value
             );
-            validator = validator.oneOf(validValues, "Invalid selection");
+            validator = validator.oneOf(validValues, "اختيار غير صالح");
           }
           break;
         case "text":
         default:
-          validator = yup.string().required("This field is required");
+          validator = yup.string().required("هذا الحقل مطلوب");
           break;
       }
 
